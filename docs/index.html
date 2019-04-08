@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:9090/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  
+  <title></title>
+  <script async="" src="./a2_fintech_files/analytics.js.download"></script><script src="https://storage.googleapis.combower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="https://storage.googleapis.comelements/codelab.html">
+  <link rel="stylesheet" href="./a2_fintech_files/css">
+  <style is="custom-style">
+    body {
+      font-family: "Roboto",sans-serif;
+      background: var(--google-codelab-background, #F8F9FA);
+    }
+  </style>
+  
+</head>
+<body unresolved="" class="fullbleed">
+
+  <google-codelab title="" environment="web" feedback-link="">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <table>
+<tbody><tr><td colspan="1" rowspan="1"><p><strong>Summary</strong></p>
+</td><td colspan="1" rowspan="1"><p> In this codelab, you'll analyse the fintech hiring trends in the largest banks in the U.S.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>URL</strong></p>
+</td><td colspan="1" rowspan="1"><p><a href="https://github.com/phadkeraj/A2_Fintech-Analysis" target="_blank">A2-Fintech-Hiring</a></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Category</strong></p>
+</td><td colspan="1" rowspan="1"><p>Analysis</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Environment</strong></p>
+</td><td colspan="1" rowspan="1"><p>Jupyter, Tableau, Docker , MS Excel</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Status</strong></p>
+</td><td colspan="1" rowspan="1"><p>Draft</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Feedback Link</strong></p>
+</td><td colspan="1" rowspan="1"><p>https://github.com/phadkeraj/A2_Fintech-Analysis</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Author</strong></p>
+</td><td colspan="1" rowspan="1"><p>    Rishika , Akhilesh Tawde , Rohit Jain , Raj Phadke</p>
+</td></tr>
+</tbody></table>
+<p>In the previous assignment we scraped data from 2 US banks(Northern Trust and M&amp;T Bank) and analysed their hiring trends in terms of fintech. All the analysis related to the same are given in claat document given below: </p>
+<p><a href="https://docs.google.com/document/d/1Zaw7jykgg-UtbOf3QatmU6JlHrk2wEtPh61uj1rrPuw/edit#" target="_blank"><paper-button class="colored" raised="">old claat document</paper-button></a></p>
+<p>In this assignment we combine the data scraped from all the 24 largest banks by market cap in the United States , perform feature engineering by gaining insights from the existing data and do further analysis on the  data by using Tableau. Also we will pipeline the whole process from fetching the data to analysing it. Then finally we dockerise it into a docker image.</p>
+<h2><strong>What will you build ?</strong></h2>
+<p>In this codelab, you're going to build analysis of hiring trends in 24 banks. You'll :</p>
+<ul>
+<li>Clean data scraped from 24 banks in US.</li>
+<li>Standardise the data in one single format.</li>
+<li>Classify the words into multiple buckets.</li>
+<li>Classify if a job posting is fintech or not.</li>
+<li>Visualise the analysis on Tableau.</li>
+<li>Pipeline the whole process using Luigi.</li>
+<li>Dockerise the pipelined process into a docker image.</li>
+</ul>
+<h2><strong>What will you learn ?</strong></h2>
+<ul>
+<li>How to combine 12 files into one single file.</li>
+<li>How to treat large chunks of data with missing files .</li>
+<li>How to use domain knowledge to create features from existing features.</li>
+<li>How to pipeline the analysis process using luigi.</li>
+<li>How to dockerise the process into a docker image.</li>
+</ul>
+<h2><strong>What you'll need</strong></h2>
+<ul>
+<li>A recent version of Jupyter or python 3.5 or any python coding platform of your choice</li>
+<li>Tableau</li>
+<li>Docker</li>
+<li><a href="https://github.com/phadkeraj/A2_Fintech-Analysis" target="_blank">The sample code</a></li>
+<li>Basic knowledge of Python, Tableau Server, Docker, pipelining using luigi and MS-Excel</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting set up" duration="0">
+        <h2><strong>Download the code</strong></h2>
+<p>Click the following link to download all the code for this codelab:</p>
+<p><a href="https://github.com/phadkeraj/A2_Fintech-Analysis" target="_blank"><paper-button class="colored" raised=""><iron-icon icon="file-download"></iron-icon>Download source code</paper-button></a></p>
+<p>Unpack the downloaded zip file. This will unpack a root folder (<a href="https://github.com/phadkeraj/A2_Fintech-Analysis" target="_blank">A2_Fintech-Analysis</a>), which contains one folder for each step of this codelab, along with all of the resources you will need.</p>
+<p>The step-NN folders contain the desired end state of each step of this codelab. They are there for reference. We'll be doing all our coding work in a directory called work.</p>
+<h2><strong>Install and run docker</strong></h2>
+<p>To start with the installation of Docker, we first need to create an account on DockerHub.</p>
+<p>After creating an account on DockerHub, you are now ready to install the application.</p>
+<p>For Mac users , they can download the application from the following link: </p>
+<p><a href="https://store.docker.com/editions/community/docker-ce-desktop-mac" target="_blank"><paper-button class="colored" raised=""><iron-icon icon="file-download"></iron-icon>Download docker for mac</paper-button></a></p>
+<p>For Windows user, the link to download Docker is: </p>
+<p><a href="https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe" target="_blank"><paper-button class="colored" raised=""><iron-icon icon="file-download"></iron-icon>Download docker for windows</paper-button></a></p>
+<p>For Windows 10 Home users, Docker does not support, so instead of using Docker we use </p>
+<p><a href="https://download.docker.com/win/stable/DockerToolbox.exe" target="_blank"><paper-button class="colored" raised=""><iron-icon icon="file-download"></iron-icon>Download docker tool box</paper-button></a></p>
+<p>After installing Docker we can start using the terminal after logging into it using the login command: docker login.</p>
+<p>Test that your installation works by running the simple Docker image, hello-world:</p>
+<p>docker run hello-world</p>
+<p>hub.docker.com</p>
+<p>Docker Desktop (Mac) - Docker Hub</p>
+<p>The fastest and easiest way to get started with Docker on Mac</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Preparation and Data Preprocessing" duration="0">
+        <p><strong>Aggregation of the data scraped for 24 banks by 12 teams </strong></p>
+<p>Download the csv given below which contains the data scraped by from 24 banks by the teams. Merge the data scraped into one excel sheet using the code below  </p>
+<pre><code>                 
+import requests
+import csv
+from bs4 import BeautifulSoup
+import re
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+import lxml
+import csv
+from collections import defaultdict
+import pandas as pd
+import numpy as np
+
+#from lxml import etree
+
+#import urllib
+from urllib.request import urlopen
+pages = []
+abcd = {}
+import glob 
+import pandas as pd
+path =r'Z:/ADS/Assignemnt2/merge' # use your path
+allFiles = glob.glob(path + "/*.csv")
+
+list_ = []
+
+for file_ in allFiles:
+    df = pd.read_csv(file_,index_col=None, header=0)
+    list_.append(df)
+
+frame = pd.concat(list_, axis = 0, ignore_index = True)
+frame.to_csv("Z:/ADS/Assignemnt2/Merge/final_file.csv",index=False, encoding='utf8')
+</code></pre>
+<p>The merged csv is given below:</p>
+<p><a href="https://drive.google.com/open?id=1aeCF5VOMKafxFpDiM-cXiScfSc74Uh9L" target="_blank"><paper-button class="colored" raised="">link to merged csv file</paper-button></a></p>
+<h3>Problems faced while aggregating the data for all the banks</h3>
+<ul>
+<li><strong>Description not lemmatized </strong>: The words in the description of the banks were not lemmatized properly. The spacing between the text was improper. We needed the strings to be in the same case that is either the whole data should be in lower case or in upper case.</li>
+<li><strong>Dealing with missing data : </strong>The data scraped for all the websites did not have all locations in the description. So we built a generalized scraper which we executed against all the websites.The scraper may vary from bank to bank as specific scrapers were required for few banks.</li>
+</ul>
+<h3>Steps taken to overcome the problems </h3>
+<p><strong>Lemmatization, tokenization and manipulation of strings</strong> : Lemmatization is the process of grouping together the different inflected forms of a word so they can be analysed as a single item. So we did the lemmatizing of data so that we could obtain relevant words in the descriptions. </p>
+<p><strong>Text casing</strong> : We used the .lower() function to convert all the text into lower case so that all the text could be converted into one case.</p>
+<p>The code is given below :</p>
+<pre><code>import requests
+import csv
+from bs4 import BeautifulSoup
+import re
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+import lxml
+import csv
+from collections import defaultdict
+import pandas as pd
+import numpy as np
+
+#from lxml import etree
+
+#import urllib
+from urllib.request import urlopen
+abcd = {}
+dataset=[]
+link=[]
+institution = []
+position =[]
+df1 = pd.read_csv("Z:/ADS/Assignemnt2/Merge/final_file.csv",header=None,names=["0","words"])
+#df = pd.read_csv("Z:/ADS/a/textrank_final.csv")
+with open('Z:/ADS/Assignemnt2/Merge/final_file.csv',encoding="utf8", newline='') as myFile:  
+    reader1 = csv.reader(myFile)
+    for row1 in reader1:
+        data = row1[2]
+        data = data.lower()
+        stop_words = set(stopwords.words("english"))
+                #remove tags
+        data=re.sub("&amp;lt;/?.*?&amp;gt;"," &amp;lt;&amp;gt; ",data)
+                # remove special characters and digits
+        data=re.sub("(\\d|\\W)+"," ",data)
+                ##Convert to list from string
+        data = data.split()
+                #Lemmatisation
+        lem = WordNetLemmatizer()
+        data = [lem.lemmatize(word) for word in data if not word in stop_words] 
+        data = " ".join(data)
+        dataset.append(data)
+        #dataset.append(row1[2])
+        link.append(row1[0])
+        institution.append(row1[3])
+        position.append(row1[1])
+</code></pre>
+<p><strong>Scraped a generalised code against all the bank websites : </strong>We built a generalised scraper and executed it against all the bank websites to obtain the location which were to be used for further analysis.</p>
+<p>The generalised code used for scraping is as follows:</p>
+<pre><code>                 
+import requests
+import csv
+from bs4 import BeautifulSoup
+import re
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+import lxml
+import csv
+from collections import defaultdict
+import pandas as pd
+import numpy as np
+
+#from lxml import etree
+
+#import urllib
+from urllib.request import urlopen
+abcd = {}
+dataset=[]
+link=[]
+institution = []
+position =[]
+df1 = pd.read_csv("Z:/ADS/Assignemnt2/Merge/final_file.csv",header=None,names=["0","words"])
+#df = pd.read_csv("Z:/ADS/a/textrank_final.csv")
+with open('Z:/ADS/Assignemnt2/Merge/final_file.csv',encoding="utf8", newline='') as myFile:  
+    reader1 = csv.reader(myFile)
+    for row1 in reader1:
+        data = row1[2]
+        data = data.lower()
+        stop_words = set(stopwords.words("english"))
+                #remove tags
+        data=re.sub("&amp;lt;/?.*?&amp;gt;"," &amp;lt;&amp;gt; ",data)
+                # remove special characters and digits
+        data=re.sub("(\\d|\\W)+"," ",data)
+                ##Convert to list from string
+        data = data.split()
+                #Lemmatisation
+        lem = WordNetLemmatizer()
+        data = [lem.lemmatize(word) for word in data if not word in stop_words] 
+        data = " ".join(data)
+        dataset.append(data)
+        #dataset.append(row1[2])
+        link.append(row1[0])
+        institution.append(row1[3])
+        position.append(row1[1])
+</code></pre>
+<h2><strong>Handling the missing data gathered from the websites for further analysis</strong></h2>
+<p>Traverse through all the links provided in the csv files.Then fetch the locations from the websites by running scraper against each and every site.</p>
+<h3>Problems faced while fetching all the locations from the websites </h3>
+<ul>
+<li>The locations scraped from different websites were not in the same format.To put the locations into a single format so that they can be used for further analysis we used geopy.</li>
+<li>There were instances when we could not fetch the locations from the websites due to inactive links.</li>
+</ul>
+<h3>How did we overcome the problems faced ?</h3>
+<ul>
+<li><strong>We used geopy to fetch the locations in a standard format.</strong></li>
+</ul>
+<h3>What is geopy ?</h3>
+<p><strong>geopy</strong> is a <strong>Python</strong> 2 and 3 client for several popular geocoding web services. <strong>geopy</strong> makes it easy for <strong>Python</strong> developers to locate the coordinates of addresses, cities, countries, and landmarks across the globe using third-party geocoders and other data sources.</p>
+<p><img style="max-width: 318.00px" src="./a2_fintech_files/6727be554d120e85.png"></p>
+<h3>Why do we need geoPy?</h3>
+<p>When you scrape data from the websites you'll notice that the locations are not is the same format as shown below:</p>
+<p><img style="max-width: 356.00px" src="./a2_fintech_files/1d3ac608df0019c7.png"></p>
+<p>So we use geoPy to get the locations in a standard format.</p>
+<h3>How to install geoPy?</h3>
+<p>Open the Jupiter file on your computer and type the following command.</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/c56705e919c65df0.png"></p>
+<p>The geopy package will be installed.</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/7134c2b8dd9206e8.png"></p>
+<p>The code for fetching the locations using geoPy is as follows :</p>
+<pre><code>import geopy
+from geopy.geocoders import Nominatim
+from geopy.extra.rate_limiter import RateLimiter
+from geopy.exc import GeocoderTimedOut
+import pandas as pd
+import csv
+
+#Please Change Filename
+input_file = "Undone.csv"
+dataset = pd.read_csv(input_file,encoding='latin-1')
+
+data = dataset['City']
+
+data = list(data)
+
+
+final_locations = []
+m = "Muliple Locations"
+
+for items in data:
+    geolocator = Nominatim(user_agent="phadke.ra@husky.neu.edu")
+    if items!="Multiple":
+        try:
+            locations = geolocator.geocode(items)
+            print(locations)
+            if type(locations)!="None" or type(locations)!="none":
+                final_locations.append(locations)
+
+            else:
+                final_locations.append(items)
+
+        except GeocoderTimedOut:
+            continue
+    else:
+        final_locations.append(m)
+
+
+
+with open('bacha_hua_3.csv','w',encoding='utf-8',newline='') as output_file:
+    writer = csv.writer(output_file)
+    for items in final_locations:
+        writer.writerow([items])
+</code></pre>
+<h3>Problems faced while using geoPy</h3>
+<p>geoPy allows us to run only 2500 locations at a time.To fetch all the locations in one standard format break down the data into sets of 2500 locations.Fetch all the locations in a standard format.</p>
+<p>The link to obtain the csv is as follows :</p>
+<p><a href="https://docs.google.com/spreadsheets/d/1XOFVlmgU1xyA8jaRxNiuA10S4p9d5Nmym1JicGSv1yc/edit?usp=sharing" target="_blank"><paper-button class="colored" raised="">Distinct locations</paper-button></a> </p>
+<ul>
+<li> <strong>Rather than eliminating the missing data that is locations in our case we considered the inactive links and we renamed it as no locations so that it would not hamper our further analysis.</strong></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Forming clusters for different areas in Fintech" duration="0">
+        <h2><strong>Summarize the words into a single list of 100 keywords by manually reviewing the data </strong></h2>
+<p>Update the already existing 100 keywords list by making amendments after appending the new relevant words found from the other the pdf files by not only considering the top 100 keywords but the whole file. Search for terms from the pdfs on fintech.Read about relevant words from all the pdfs online. Classify the words on the basis of the bucket header against their relevance. We found a csv of 104 words after following this procedure.</p>
+<h2><strong>Create a word cloud on the basis of the frequency of words </strong></h2>
+<p>Create a word cloud on the basis of the frequency of words depending on the word count observed in the first part. The word cloud is given below :</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/da6f979543034958.png"></p>
+<h2><strong>Created clusters on the basis of their relevance in regard to Fintech</strong></h2>
+<p>We divided the 104 words into 9 clusters. The clusters are listed below :</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/b303031b134f6f72.png"></p>
+<p>Segregated 104 words into clusters of 9 based on their relevance to their respective bucket header.We considered 9 buckets ie <strong>Payments, Blockchain, Trading, Investment, Lending,Insurance , Data &amp; Analytics, Security and Software Development. </strong></p>
+<p>The link to the csv is given below :</p>
+<p>Then we further divided these buckets into two buckets ,<strong>Financial and Technology</strong>. The words related to the financial domain were classified under the finance domain and the words related to the technical domain were classified under the technology domain.</p>
+<p>Upload the 104 words into the drop box </p>
+<h3>What is a dropbox?</h3>
+<p>  Dropbox can create a special folder on the user's computer, the contents of which are synchronized to Dropbox's servers and to other computers and devices where the user has installed Dropbox, keeping the same files up-to-date on all devices. </p>
+<h3>Why use dropbox ?</h3>
+<p>To integrate the data and fetch it later on for automation purposes. Also drop box supports different applications.We used different platforms in multiple applications so if we had not used dropbox there might be issues at the time of integration of the data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feature Engineering" duration="0">
+        <h2><strong>Determine if a job is fintech related or not ?</strong></h2>
+<p>To determine if a job is fintech related or not we classified the 104 words into 2 buckets that is <strong>Financial and Technology.</strong></p>
+<h2><strong>Why did we bucket the 104 keywords into 2 buckets?</strong></h2>
+<h3>How do we classify if a job is Fintech or not ?</h3>
+<p>A fintech job is defined as 'financial technology,' is used to describe new tech that seeks to improve and automate the delivery and use of financial services. ​​​So keeping this definition in mind we came to a conclusion that if a job's description has substantial count of both financial and technology words then the job is a fintech job otherwise not.</p>
+<h3>Algorithm followed to decide if a job is Fintech or not and the reason behind it ?</h3>
+<p>Decided whether a job link is fintech or not by comparing the words in the list with the job descriptions. Divided the range of words count into following : </p>
+<ol type="1" start="1">
+<li> If both the financial and technical words count were greater than 25 then we concluded that its a pure fintech job : We observed that if the count of both the financial and technical words is greater than the substantial amount that is 25 in our case then it can be called a fintech job.</li>
+<li>If the financial hits are greater than 25 ,the technical count is between 15 and 25 and the percentage is between 43 and 55.</li>
+</ol>
+<p><strong>Why did we choose percentage ? </strong></p>
+<p>We chose percentage because fintech means putting new tech into improvisation of financial services.So we considered the count of tech words as our numerator and divided it by the total count of both the tech and financial words for each job link. This way we got the percentage of the weightage of technical aspect in the financial domain.</p>
+<p>Percentage = (Technical count / (Technical count + Financial count) ) * 100</p>
+<p>For all the following cases we observed that one single range can not be used for all the numbers as the numbers decreased the accuracy varied . So to optimise the results we divided the numbers into smaller sections and applied different logics to all. The logics used below were formed on the basis of the test data provided in csv at the end of this section.</p>
+<ol type="1" start="3">
+<li>If the financial hits are greater than 15 ,the technical count is between 10 and 15 and the percentage is between 42 and 58.</li>
+<li>If the financial hits are between 10 and 15 , the technical count is greater than or equal to 15 and the the percentage is between 42 and 58.</li>
+<li>If the financial hits are greater than equal to 10, the technical count is between 10 and 15 and the percentage is between 40 and 60.</li>
+<li>If the financial hits are greater than equal to 10, the technical hits are between 15 and 10 and the percentage is between 40 and 60.</li>
+<li>If the technical count is greater than equal to 10, the financial count is between 10 and 15 and the percentage is between 40 and 60.</li>
+<li>If the financial count is greater than 10, the technical count is between 5 and 10 and the difference is between 0 and 4.</li>
+<li>If the technical count is greater than or equal to 10, the financial count is between 5 and 10 and the difference is between 0 and -5.</li>
+<li>If the technical count is between 5 and 10 and the difference is between -4 and 2.</li>
+<li>If the financial count is between 5 and 10 and the difference is between -3 and 3.</li>
+<li>If financial count is zero and the difference is between -3 and 3</li>
+<li>If the technical count is zero and the difference is between 0 and 3.</li>
+</ol>
+<p>The code for segregating the jobs into fintech and non fintech is given below:</p>
+<pre><code>import pandas as pd
+import requests
+Swdxc                                
+import csv
+import numpy as np
+df = pd.read_csv("Z:/ADS/Assignemnt2/data_final.csv")
+
+df['Finance']=df.iloc[:,3:56].sum(axis=1)
+#print(df)
+df['Technology']=df.iloc[:,57:107].sum(axis=1)
+df.insert(loc=109, column='diff',value='')
+df.insert(loc=110, column='Percent',value='')
+df['diff'] = df['Finance']-df['Technology']
+df['Percent'] = ((df['Technology'])/(df['Finance']+df['Technology']))*100
+df.loc[((df['Finance'] &gt;= 25)&amp;(df['Technology'] &gt;= 25)),'Fintech'] = 'True'
+df.loc[((df['Finance'] &gt;= 25)&amp;(df['Technology'].between(15, 25, inclusive=True))&amp;(df['Percent'].between(43, 55, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Technology'] &gt;= 25)&amp;(df['Finance'].between(15, 25, inclusive=True))&amp;(df['Percent'].between(43, 55, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Finance'] &gt;= 15)&amp;(df['Technology'].between(10, 15, inclusive=True))&amp;(df['Percent'].between(42, 58, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Technology'] &gt;= 15)&amp;(df['Finance'].between(10, 15, inclusive=True))&amp;(df['Percent'].between(42, 58, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Finance'] &gt;= 10)&amp;(df['Technology'].between(10, 15, inclusive=True))&amp;(df['Percent'].between(40, 60, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Technology'] &gt;= 10)&amp;(df['Finance'].between(10, 15, inclusive=True))&amp;(df['Percent'].between(40, 60, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Finance'] &gt;= 10)&amp;(df['Technology'].between(5, 10, inclusive=True))&amp;(df['diff'].between(0,4, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Technology'] &gt;= 10)&amp;(df['Finance'].between(5, 10, inclusive=True))&amp;(df['diff'].between(0,-5, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Technology'].between(5, 10, inclusive=True))&amp;(df['diff'].between(-5,3, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Finance'].between(5, 10, inclusive=True))&amp;(df['diff'].between(-3,3, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Finance'] == 0)&amp;(df['diff'].between(-6, 0, inclusive=True))),'Fintech'] = 'True'
+df.loc[((df['Technology'] == 0)&amp;(df['diff'].between(0, 3, inclusive=True))),'Fintech'] = 'True'
+df.loc[(df['Position'].str.contains("Teller")==True),'Fintech'] = 'False'
+df.loc[(df['Position'].str.contains("client-service")==True),'Fintech'] = 'False'
+df.loc[(df['Position'].str.contains("teller")==True),'Fintech'] = 'False'
+df.loc[(df['Position'].str.contains("customer")==True),'Fintech'] = 'False'
+df.loc[(df['Position'].str.contains("Banker")==True),'Fintech'] = 'False'
+
+
+df.to_csv("Z:/ADS/Assignemnt2/fintech.csv",index=False, encoding='utf8')
+df
+</code></pre>
+<p><strong>Assigned each job into a fintech category :</strong> We assigned the job postings into categories and ranked them.</p>
+<ol type="1" start="1">
+<li>For each number of given job links, we calculated the number of words occurred in the given job in the given job link for each bucket.</li>
+<li>If the count of number of words occurred is greater than 2 then we set the flag for that bucket for given job link as 1.</li>
+<li>We counted the number of flags which were set to 1 for each bucket.On the basis of this count we ranked the given job sector. </li>
+</ol>
+<p>The code for analysing each job into a fintech category is given below :</p>
+<pre><code>import luigi
+import pandas as pd
+import requests
+import csv
+import numpy as np
+import dropbox
+from dropbox.files import WriteMode
+        df1 = pd.read_csv("Z:/ADS/Assignemnt2/luigi/Fintech.csv")
+        df1['Payment Non 0']=df1.iloc[:,5:16].astype(bool).sum(axis=1)
+        df1['Blockchain Non 0']=df1.iloc[:,16:21].astype(bool).sum(axis=1)
+        df1['Trading Non 0']=df1.iloc[:,21:36].astype(bool).sum(axis=1)
+        df1['Investment Non 0']=df1.iloc[:,37:44].astype(bool).sum(axis=1)
+        df1['Lending Non 0']=df1.iloc[:,44:53].astype(bool).sum(axis=1)
+        df1['Insurance Non 0']=df1.iloc[:,53:59].astype(bool).sum(axis=1)
+        df1['Data &amp; analytics Non 0']=df1.iloc[:,59:80].astype(bool).sum(axis=1)
+        df1['Security Non 0']=df1.iloc[:,80:96].astype(bool).sum(axis=1)
+        df1['Software Non 0']=df1.iloc[:,96:108].astype(bool).sum(axis=1)
+
+
+        df1.loc[(df1['Payment Non 0']&gt;2),'Payment Hit']=1
+        df1.loc[(df1['Payment Hit'].isnull()),'Payment Hit']=0
+
+        df1.loc[(df1['Blockchain Non 0']&gt;2),'Blockchain Hit']=1
+        df1.loc[(df1['Blockchain Hit'].isnull()),'Blockchain Hit']=0
+
+        df1.loc[(df1['Lending Non 0']&gt;2),'Lending Hit']=1
+        df1.loc[(df1['Lending Hit'].isnull()),'Lending Hit']=0
+
+        df1.loc[(df1['Investment Non 0']&gt;2),'Investment Hit']=1
+        df1.loc[(df1['Investment Hit'].isnull()),'Investment Hit']=0
+
+        df1.loc[(df1['Lending Non 0']&gt;2),'Lending Hit']=1
+        df1.loc[(df1['Lending Hit'].isnull()),'Lending Hit']=0
+
+        df1.loc[(df1['Insurance Non 0']&gt;2),'Insurance Hit']=1
+        df1.loc[(df1['Insurance Hit'].isnull()),'Insurance Hit']=0
+
+        df1.loc[(df1['Data &amp; analytics Non 0']&gt;2),'Data &amp; analytics Hit']=1
+        df1.loc[(df1['Data &amp; analytics Hit'].isnull()),'Data &amp; analytics Hit']=0
+
+        df1.loc[(df1['Security Non 0']&gt;2),'Security Hit']=1
+        df1.loc[(df1['Security Hit'].isnull()),'Security Hit']=0
+
+        df1.loc[(df1['Software Non 0']&gt;2),'Software Hit']=1
+        df1.loc[(df1['Software Hit'].isnull()),'Software Hit']=0
+
+
+
+        df1.to_csv("Z:/ADS/Assignemnt2/luigi/Fintech_Data.csv",index=False, encoding='utf8')
+
+</code></pre>
+<h2>Reviews and comments on analysis </h2>
+<ul>
+<li>We tested the accuracy of our methodology by picking up at 10-15 test cases for each of the 13 cases mentioned above and manually tested each and every case by traversing through the links and then figured out if it were a fintech job posting or not. We came to a conclusion that our methodology gave 70-80 percent accuracy. </li>
+<li>We picked up  5-10 test cases for each and every bucket.Then we manually traversed through every link and verified if the job links were categorized correctly or not. We observed that our algorithm gave 65-75 percent accuracy.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Preparation for Analysis" duration="0">
+        <h2>        <strong>Creating calculated fields :</strong></h2>
+<ol type="1" start="1">
+<li>From the final csv we had a column which if True meant that the job is a fintech job and if False meant that the job is a non fintech job. But for visualisation of the same csv we converted the fintech and non fintech column into 0's and 1's.</li>
+</ol>
+<p>The link to the csv is given below :</p>
+<ol type="1" start="2">
+<li>In the final csv we assigned the words  buckets numbers. For example the words in the payments column were assigned numbers 1- 11 and so on for the other buckets. All the keywords got a specific number so that it was easier for us to add the frequency of all the keywords on the basis of their occurence. </li>
+</ol>
+<ol type="1" start="3">
+<li>We divided the non fintech jobs into two categories : <strong>whether the job is a financial job or a technology job. </strong></li>
+</ol>
+<p><strong>Basis of segregation : </strong>Upon careful observation we concluded that if the number of financial jobs was greater than or equal to technical jobs then it was a pure financial job.</p>
+<p>Otherwise it was a pure technical job.</p>
+<p><strong>Why the need for segregation : </strong>We divided the data into these two categories to avoid cluttering.</p>
+<h2><strong>Filters used for analysis : </strong></h2>
+<ol type="1" start="1">
+<li>Status of the links : We checked if the status of the link was <strong>active or not</strong>. While scraping the websites for locations we came across the problem that there were few links where we could not fetch locations. So to avoid any unecessary elimination of data we consider the locations as no location for inactive links.</li>
+<li>Geographic location of the job postings : We checked if the location of the job posting was in in us or not and created a filter for the same. We did this because most of our analysis is based on the job postings posted by the banks located in U.S.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pipelining the data" duration="0">
+        <h2><strong>Download luigi</strong> </h2>
+<p>Download luigi package on your python by using the command below :</p>
+<p><img style="max-width: 623.00px" src="./a2_fintech_files/27627d50bdd29d27.png"></p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/f68cc7a6b8778ec5.png"></p>
+<h2><strong>What is luigi?</strong></h2>
+<p>Luigi is a Python  package that helps you build complex pipelines of batch jobs. It handles dependency resolution, workflow management, visualization, handling failures, command line integration, and much more.</p>
+<h2><strong>Why use luigi ?</strong></h2>
+<p>Features of Luigi are listed below:</p>
+<ul>
+<li>Dependency management</li>
+<li>Checkpoints / Failure recovery</li>
+<li>CLI integration / parameterisation</li>
+<li>Dependency Graph visualisation</li>
+</ul>
+<p>There are two core concepts to understand how we can apply Luigi to our own data pipeline: Tasks and Targets. A task is a unit of work, designed by extending the class luigi.Task and overriding some basic methods. The output of a task is a target, which can be a file on the local filesystem, a file on Amazon's S3, some piece of data in a database etc.</p>
+<p>Dependencies are defined in terms of inputs and outputs, i.e. if Task B depends on Task A, it means that the output of Task A will be the input of Task B.</p>
+<p>Tasks used in pipelining are listed below :</p>
+<p><strong>Task 1 </strong>: We fetched the final files from the drop box which contains all the datasets. The link to the dropbox is given below :</p>
+<p><a href="https://www.dropbox.com/sh/4g08y9zdvz50zms/AAAlR3HGtwiksVDUidL0_lx1a?dl=0" target="_blank"><paper-button class="colored" raised="">Link to the drop box file</paper-button></a></p>
+<p><strong>Task 2 </strong>: We classified the links obtained into two categories into active links and inactive links because while scraping for locations against all the websites we came across the problem that there were inactive links so we could not get locations for them so instead of eliminating them we replaced them as no locations.</p>
+<p><strong>Task 3 </strong>: We identified that based on the word count that if a word is pure fintech or not.</p>
+<p><strong>Task 4</strong> : Data featuring : Categorized each fintech job link based on its relevance against its respective bucket header.</p>
+<p><strong>Task 5</strong> : Upload this updated CSV file to docker. </p>
+<p><strong>Task 6 </strong>:  We will open the visualisation link under host system's browser.</p>
+<p>The code for pipelining the process is given below :</p>
+<pre><code>import luigi
+import pandas as pd
+import requests
+import csv
+import numpy as np
+import dropbox
+import os
+from dropbox.files import WriteMode
+dbx = dropbox.Dropbox('aDf1htlkmN8AAAAAAAAC-_IjjyFsEJBJU6fY86Y32dr1LH3kVthriApkX9h08kmf')
+class Task0(luigi.Task):
+    def run(self):
+        #dbx = dropbox.Dropbox('aDf1htlkmN8AAAAAAAAC-_IjjyFsEJBJU6fY86Y32dr1LH3kVthriApkX9h08kmf')
+
+        #xls = 'data_final.csv'
+
+
+
+        dbx.files_download_to_file(os.getcwd()+'/data_final.csv', '/DataScienceTeam9/'+ 'data_final.csv')
+                
+    def output(self):
+        return luigi.LocalTarget(os.getcwd()+"/data_final.csv")
+
+class Task1(luigi.Task):
+    def requires(self):
+        yield Task0()
+        
+    def run(self):
+        df_data = pd.read_csv(Task0().output().path) 
+        df_data.loc[(df_data['Location'].str.contains("No location")==True),'Status'] = 'Inactive'
+        df_data.loc[(df_data['Location'].str.contains("No Location")==True),'Status'] = 'Inactive'
+        df_data.loc[(df_data['Status'].isnull()),'Status'] = 'Active'
+
+        cols = df_data.columns.tolist()
+        column_to_move = "Status"
+        new_position = 4
+        cols.insert(new_position, cols.pop(cols.index(column_to_move)))
+        df_data = df_data[cols]
+
+        df_data.to_csv(self.output().path,index=False, encoding='utf8')
+        print('Task1 Completed')
+        
+    def output(self):
+        return luigi.LocalTarget(os.getcwd()+"/data_final_status.csv")
+
+class Task2(luigi.Task):
+    def requires(self):
+        yield Task1()
+    def run(self):
+        df = pd.read_csv(Task1().output().path)
+        df['Finance']=df.iloc[:,5:57].sum(axis=1)
+        df['Technology']=df.iloc[:,57:107].sum(axis=1)
+        df.insert(loc=111, column='diff',value='')
+        df.insert(loc=112, column='Percent',value='')
+        df['diff'] = df['Finance']-df['Technology']
+        df['Percent'] = ((df['Technology'])/(df['Finance']+df['Technology']))*100
+        df.loc[((df['Finance'] &gt;= 25)&amp;(df['Technology'] &gt;= 25)),'Fintech'] = 'True'
+        df.loc[((df['Finance'] &gt;= 25)&amp;(df['Technology'].between(15, 25, inclusive=True))&amp;(df['Percent'].between(43, 55, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Technology'] &gt;= 25)&amp;(df['Finance'].between(15, 25, inclusive=True))&amp;(df['Percent'].between(43, 55, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Finance'] &gt;= 15)&amp;(df['Technology'].between(10, 15, inclusive=True))&amp;(df['Percent'].between(42, 58, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Technology'] &gt;= 15)&amp;(df['Finance'].between(10, 15, inclusive=True))&amp;(df['Percent'].between(42, 58, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Finance'] &gt;= 10)&amp;(df['Technology'].between(10, 15, inclusive=True))&amp;(df['Percent'].between(40, 60, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Technology'] &gt;= 10)&amp;(df['Finance'].between(10, 15, inclusive=True))&amp;(df['Percent'].between(40, 60, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Finance'] &gt;= 10)&amp;(df['Technology'].between(5, 10, inclusive=True))&amp;(df['diff'].between(0,4, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Technology'] &gt;= 10)&amp;(df['Finance'].between(5, 10, inclusive=True))&amp;(df['diff'].between(0,-5, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Technology'].between(5, 10, inclusive=True))&amp;(df['diff'].between(-5,3, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Finance'].between(5, 10, inclusive=True))&amp;(df['diff'].between(-3,3, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Finance'] == 0)&amp;(df['diff'].between(-6, 0, inclusive=True))),'Fintech'] = '1'
+        df.loc[((df['Technology'] == 0)&amp;(df['diff'].between(0, 3, inclusive=True))),'Fintech'] = '1'
+        df.loc[(df['Position'].str.contains("Teller")==True),'Fintech'] = '0'
+        df.loc[(df['Position'].str.contains("client-service")==True),'Fintech'] = '0'
+        df.loc[(df['Position'].str.contains("teller")==True),'Fintech'] = '0'
+        df.loc[(df['Position'].str.contains("customer")==True),'Fintech'] = '0'
+        df.loc[(df['Position'].str.contains("Banker")==True),'Fintech'] = '0'
+        df.loc[(df['Fintech'].isnull()),'Fintech'] = '0'
+        #df.to_csv("Z:/ADS/Assignemnt2/luigi/fintech.csv",index=False, encoding='utf8')
+
+        df.to_csv(self.output().path,index=False, encoding='utf8')
+        print('Task2 Completed')
+        
+    def output(self):
+        return luigi.LocalTarget(os.getcwd()+"/fintech.csv")
+
+class Task3(luigi.Task):
+    def requires(self):
+        yield Task2()
+    def run(self):
+        df1 = pd.read_csv(Task2().output().path)
+        df1['Payment Non 0']=df1.iloc[:,5:16].astype(bool).sum(axis=1)
+        df1['Blockchain Non 0']=df1.iloc[:,16:21].astype(bool).sum(axis=1)
+        df1['Trading Non 0']=df1.iloc[:,21:36].astype(bool).sum(axis=1)
+        df1['Investment Non 0']=df1.iloc[:,37:44].astype(bool).sum(axis=1)
+        df1['Lending Non 0']=df1.iloc[:,44:53].astype(bool).sum(axis=1)
+        df1['Insurance Non 0']=df1.iloc[:,53:59].astype(bool).sum(axis=1)
+        df1['Data &amp; analytics Non 0']=df1.iloc[:,59:80].astype(bool).sum(axis=1)
+        df1['Security Non 0']=df1.iloc[:,80:96].astype(bool).sum(axis=1)
+        df1['Software Non 0']=df1.iloc[:,96:108].astype(bool).sum(axis=1)
+
+
+        df1.loc[(df1['Payment Non 0']&gt;2),'Payment Hit']=1
+        df1.loc[(df1['Payment Hit'].isnull()),'Payment Hit']=0
+
+        df1.loc[(df1['Blockchain Non 0']&gt;2),'Blockchain Hit']=1
+        df1.loc[(df1['Blockchain Hit'].isnull()),'Blockchain Hit']=0
+
+        df1.loc[(df1['Lending Non 0']&gt;2),'Lending Hit']=1
+        df1.loc[(df1['Lending Hit'].isnull()),'Lending Hit']=0
+
+        df1.loc[(df1['Investment Non 0']&gt;2),'Investment Hit']=1
+        df1.loc[(df1['Investment Hit'].isnull()),'Investment Hit']=0
+
+        df1.loc[(df1['Lending Non 0']&gt;2),'Lending Hit']=1
+        df1.loc[(df1['Lending Hit'].isnull()),'Lending Hit']=0
+
+        df1.loc[(df1['Insurance Non 0']&gt;2),'Insurance Hit']=1
+        df1.loc[(df1['Insurance Hit'].isnull()),'Insurance Hit']=0
+
+        df1.loc[(df1['Data &amp; analytics Non 0']&gt;2),'Data &amp; analytics Hit']=1
+        df1.loc[(df1['Data &amp; analytics Hit'].isnull()),'Data &amp; analytics Hit']=0
+
+        df1.loc[(df1['Security Non 0']&gt;2),'Security Hit']=1
+        df1.loc[(df1['Security Hit'].isnull()),'Security Hit']=0
+
+        df1.loc[(df1['Software Non 0']&gt;2),'Software Hit']=1
+        df1.loc[(df1['Software Hit'].isnull()),'Software Hit']=0
+
+        df1.to_excel(self.output().path,index=False, encoding='utf8')
+    def output(self):
+        return luigi.LocalTarget(os.getcwd()+"/Fintech_Data.xlsx")
+
+class Task4(luigi.Task):
+    def requires(self):
+        yield Task3()                    
+    def run(self):
+        file = ''
+        try:
+            dbx = dropbox.Dropbox('aDf1htlkmN8AAAAAAAAC-_IjjyFsEJBJU6fY86Y32dr1LH3kVthriApkX9h08kmf')
+       
+            with open(Task3().output().path, 'rb') as upxlsx:
+                dbx.files_upload(upxlsx.read(),'/DataScienceTeam9/Fintech_Data.xlsx', mode=dropbox.files.WriteMode("overwrite"))
+                                
+        except Exception as e:
+            print(e)
+        print('success')
+    def output(self):
+        return luigi.LocalTarget(os.getcwd()+"/Fintech_Data.xlsx")
+class Task5(luigi.Task):
+    def requires(self):
+        yield Task4()                    
+    def run(self):
+        try:
+            os.remove(os.getcwd()+'/data_final.csv')
+            os.remove(os.getcwd()+'/Fintech_Data.xlsx')
+            os.remove(os.getcwd()+"/fintech.csv")
+            os.remove(os.getcwd()+"/data_final_status.csv")
+            os.system('python -m webbrowser -t "https://us-east-1.online.tableau.com/t/r7odinson/views/DataScienceAssignment2/JobCategories?iframeSizedToWindow=true&amp;:embed=y&amp;:showAppBanner=false&amp;:display_count=no&amp;:showVizHome=no"')
+            print('Please check your Browser')
+        except Exception as e:
+            print(e)
+
+if __name__ == "__main__":
+    luigi.run()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dockerize the data" duration="0">
+        <h2><strong>What is docker ?</strong></h2>
+<p><a href="https://github.com/docker/docker" target="_blank">Docker</a> is a tool designed to make it easier to create, deploy, and run applications by using containers. Containers allow a developer to package up an application with all of the parts it needs, such as libraries and other dependencies, and ship it all out as one package. By doing so, thanks to the container, the developer can rest assured that the application will run on any other Linux machine regardless of any customized settings that machine might have that could differ from the machine used for writing and testing the code.</p>
+<h2><strong>Why use docker ?</strong></h2>
+<p>Docker is a tool that is designed to benefit both developers and system administrators, making it a part of many DevOps (developers + operations) toolchains. For developers, it means that they can focus on writing code without worrying about the system that it will ultimately be running on. It also allows them to get a head start by using one of thousands of programs already designed to run in a Docker container as a part of their application. For operations staff, Docker gives flexibility and potentially reduces the number of systems needed because of its small footprint and lower overhead.</p>
+<p>The code for the same is as follows :</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/393941fb0e4b2dc3.png"></p>
+<p>The link for all the information on docker is given below : </p>
+<p><a href="https://docs.google.com/document/d/1PheKfyrwFawWpeQv4JAX35r0pJjq6WV4Wdpq8Y_xOG0/edit" target="_blank"><paper-button class="colored" raised="">Link to the docker documentation</paper-button></a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Analysis of the data" duration="0">
+        <ol type="1" start="1">
+<li><strong>Word Cloud</strong> - Word clouds (also known as text clouds or tag clouds) work in a simple way: the more a specific word appears in a source of textual data (such as a speech, blog post, or database), the bigger and bolder it appears in the word cloud.</li>
+</ol>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/da6f979543034958.png"></p>
+<p>We analysed the word cloud on the basis of the word count that is the words with the most frequency are the largest in size.The data is filtered on the basis of frequency of the words occurrence in both the institutions.</p>
+<h2><strong>2. Total number of openings in USA </strong></h2>
+<p>Firstly we filtered the data on the basis of the location of the job posting in US . Then we plotted the banks against the job openings count is USA. Then we inferred that JP Morgan has the most job openings in US followed by the Bank Of America.</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/3c42cf9e939ccde2.png"></p>
+<h2>3. <strong>Top 10 active location in US.</strong></h2>
+<p>We filtered the links by using only active links. Then we filtered the location to US because this analysis is based on the job openings in US.The analysis was done by plotting the locations in USA against the number of job openings in the same area observed from the final csv obtained by using geoPy. We inferred that NYC has the most number of active job openings followed by Atlanta.</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/3aa134a7176b0fe5.png"></p>
+<h2><strong>4. Offshore location of banks </strong></h2>
+<p>We filtered the data by using only the active links first. Then we filtered the data by using the non usa location this time . This analysis showed us the extent to which outsourcing is done by the banks. In this analysis we plotted the 10 most active  places where outsourcing is done against the number of job openings in the same area.</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/ec31443ac1edd382.png"></p>
+<h2><strong>5. Marimekko </strong></h2>
+<p>Marimekko Charts are used to visualise categorical data over a pair of variables. In a Marimekko Chart, both axes are variable with a percentage scale, that determines both the width and height of each segment. So Marimekko Charts work as a kind of two-way <a href="https://datavizcatalogue.com/methods/stacked_bar_graph.html" target="_blank">100% Stacked Bar Graph</a>. This makes it possible to detect relationships between categories and their subcategories via the two axes.</p>
+<p>We visualised the data considering the fact that whether the link is active or inactive or not. The third and fourth factor used for this graph are that the location of the jobs postings is in USA or not. We have done individual analysis of all the banks whose graphs are provided in the following github link. We did not do a combined analysis of all the banks for this visualisation because when we showcased it for all the banks there was a lot of cluttering which did not insinuate any inference. So we did for the analysis individually for all the banks showed in the link below :</p>
+<p><a href="https://github.com/phadkeraj/A2_Fintech-Analysis" target="_blank"><paper-button class="colored" raised="">Git hub link for visualisation</paper-button></a></p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/35fe97311edbc8bd.png"> </p>
+<h2><strong>6. Overview of job buckets </strong></h2>
+<p>We had divided the fintech jobs into two categories : Pure financial jobs and pure technical jobs while preparing the data for analysis. So using the same csv file obtained in previous section we plotted the count of financial , technical and fintech jobs openings.We concluded from the graph that the number of pure fintech jobs is slightly greater than the pure technology jobs where as the finance jobs outweigh both by a very large number.</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/9dc85d8f90b7377b.png"></p>
+<h2><strong>7. Fintech and non fintech jobs </strong></h2>
+<p>We segregated the data firstly on the basis of the link status that is whether the links are active or not. Then we used the filter of location that is whether a job location is in USA or not. Then we plotted the graph between the axes : the name of the banks and the count of the fintech jobs ad non fintech jobs in those banks.We concluded that the number of job openings in both Fintech and non Fintech are the highest in JP Morgan followed by Bank Of America where as Fifth Third bank has the least number of openings in both the sectors. <img style="max-width: 624.00px" src="./a2_fintech_files/ad2239ef60d2a6de.png"></p>
+<h2><strong>8. Job categories ranking</strong></h2>
+<p>We plotted the job categories that is on the basis of the clusters which we had formed in the second section. We plotted the number of jobs against the respective bucket headers to which their relevance was justified.The following visualisation was based on the fact that the words only with a count more than 2 were considered as 1 hit and then the following chart was obtained. We concluded that the number of jobs in the Tech Development area are the most followed by Data and Analytics where as Blockchain has 0 hits because of the fact that the words inside the blockchain occurred less than twice.</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/c88849990c5bd2ea.png"></p>
+<h2><strong>9. Overall comparison </strong></h2>
+<p>Using both the filters that is whether a link is active or not and that whether the jobs are fintech or not we plotted the overall comparison by using the final csv obtained from the drop box. We concluded that the weightage of active non fintech jobs is greater than the active fintech jobs by a significant amount. And the same conclusion was made that the inactive non fintech job was greater than inactive fintech jobs.</p>
+<p><img style="max-width: 624.00px" src="./a2_fintech_files/71db0dd6f15cd203.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Inferences" duration="0">
+        <p>According to our analysis, we can see that the greatest number of Fintech Job Category , is the Technology Development sector. This clears the common misconception that Tech Development or Software Development cannot be a key area of Fintech. Our analysis also shows that most of the banks in U.S are hiring in the Fintech sector for about 20% of their overall job openings in and out of the country.</p>
+<p>What Fintech strives is to apply technology to ease the delivery of financial services. As we all know, there can be no data without an application, there could only be analytics if there are applications or software to generate that data. So, this justifies our analysis that Tech Development is also a Key area of Fintech Job.</p>
+<p>The other key areas of Fintech as we categorized are Data &amp; Analytics, Applied Security, Trading, Investments, Payments, Lending and Insurance.</p>
+<p>So, as we look through these key areas in our analysis for the top 24 banks, we can say that an individual who is looking for a Tech or Analytics in the Fintech Industry will find the most number opportunities within the country as well as offshore.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-49880327-14', 'auto');
+
+    (function() {
+      var gaCodelab = '';
+      if (gaCodelab) {
+        ga('create', gaCodelab, 'auto', {name: 'codelab'});
+      }
+
+      var gaView;
+      var parts = location.search.substring(1).split('&');
+      for (var i = 0; i < parts.length; i++) {
+        var param = parts[i].split('=');
+        if (param[0] === 'viewga') {
+          gaView = param[1];
+          break;
+        }
+      }
+      if (gaView && gaView !== gaCodelab) {
+        ga('create', gaView, 'auto', {name: 'view'});
+      }
+    })();
+  </script>
+
+
+
+</body></html>
