@@ -1,4 +1,6 @@
-# A2_Fintech-Analysis
+# Fintech Hiring Trends
+Fintech Hiring Trends is research based project to find out how the current top US banks are hiring in Fintech Related fields.
+
 Google Codelab : https://codelabs-preview.appspot.com/?file_id=1587kQyFCBuz2GoGBCno3f3WbojxPtiVVphsBJvFQ_Dk#8
 
 Docker Hub Link: https://hub.docker.com/r/rohitjain058/datascience
@@ -10,6 +12,9 @@ DropBox Keywords: https://www.dropbox.com/home/DataScienceTeam9?preview=Keywords
 
 DropBox Fintech_Data: https://www.dropbox.com/home/DataScienceTeam9?preview=Fintech_Data.csv
 (Contains the Final Dataset Used for Analysis)
+
+1)Clone this into "C:" Drive in a Folder Named "ADS" or update the path as required. 
+2) Please empty & M&T_Scraped Excel Sheet before runnning else the data would be appended upon the previously fetched data
 
 Luigi PipeLine Flow:
 1. Generated a Merged Data Set containing Institution, URL, Position and Location which was hosted on Dropbox
