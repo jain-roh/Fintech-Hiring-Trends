@@ -6,7 +6,7 @@ import numpy as np
 import dropbox
 import os
 from dropbox.files import WriteMode
-dbx = dropbox.Dropbox('aDf1htlkmN8AAAAAAAAC-_IjjyFsEJBJU6fY86Y32dr1LH3kVthriApkX9h08kmf')
+dbx = dropbox.Dropbox('token')
 class Task0(luigi.Task):
     def run(self):
         #dbx = dropbox.Dropbox('aDf1htlkmN8AAAAAAAAC-_IjjyFsEJBJU6fY86Y32dr1LH3kVthriApkX9h08kmf')
