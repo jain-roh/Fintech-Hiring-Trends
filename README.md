@@ -1,5 +1,4 @@
 
-# 📊 Fintech Job Market Analysis
 # 📊 Fintech Hiring Trends
 
 Fintech Hiring Trends is a **research-driven data engineering and analytics project** aimed at understanding how top U.S. banks are hiring in **fintech-related roles**.
