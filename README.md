@@ -1,30 +1,91 @@
-# Fintech Hiring Trends
-Fintech Hiring Trends is research based project to find out how the current top US banks are hiring in Fintech Related fields.
 
-Google Codelab : https://codelabs-preview.appspot.com/?file_id=1587kQyFCBuz2GoGBCno3f3WbojxPtiVVphsBJvFQ_Dk#8
+# 📊 Fintech Job Market Analysis
+# 📊 Fintech Hiring Trends
 
-Docker Hub Link: https://hub.docker.com/r/rohitjain058/datascience
+Fintech Hiring Trends is a **research-driven data engineering and analytics project** aimed at understanding how top U.S. banks are hiring in **fintech-related roles**.
 
-GitHub Link: https://github.com/phadkeraj/A2_Fintech-Analysis
+The project combines **data scraping, NLP-based classification, and pipeline automation** to analyze job postings and identify trends in fintech hiring.
 
-DropBox Keywords: https://www.dropbox.com/home/DataScienceTeam9?preview=Keywords+and+Bucketing.xlsx
-(Contains the Final List of Keywords)
+---
 
-DropBox Fintech_Data: https://www.dropbox.com/home/DataScienceTeam9?preview=Fintech_Data.csv
-(Contains the Final Dataset Used for Analysis)
+## 🔗 Project Resources
 
-1)Clone this into "C:" Drive in a Folder Named "ADS" or update the path as required. 
-2) Please empty & M&T_Scraped Excel Sheet before runnning else the data would be appended upon the previously fetched data
+- 📘 **Google Codelab**  
+  https://codelabs-preview.appspot.com/?file_id=1587kQyFCBuz2GoGBCno3f3WbojxPtiVVphsBJvFQ_Dk#8  
 
-Luigi PipeLine Flow:
-1. Generated a Merged Data Set containing Institution, URL, Position and Location which was hosted on Dropbox
-2. Fetched this data from Dropbox and ran it against out Fintech/Non-Fintech Mechanism to generate new features
-3. Uploaded the Final Dataset to Dropbox
-4. Established a live connection from Dropbox for this data to Tableau Server, so as to generate visual outcomes
+- 🐳 **Docker Image**  
+  https://hub.docker.com/r/rohitjain058/datascience  
 
-Steps to Reproduce the Luigi Pipeline:
-1. Import the necessary Packages, i.e Luigi for pipelining, in our case
-2. Download the code "pipeline_final.py" from the GitHub link mentioned above
-3. The global namespaces for folders have been set automatically according to the OS, so there is no need to change file paths
-4. Run "pipeline_final.py" 
-5. This will generate the final output and post it on Dropbox so that Tableau Server can eastablish a live connection 
+- 💻 **GitHub Repository**  
+  https://github.com/phadkeraj/A2_Fintech-Analysis  
+
+- 📂 **Keywords Dataset (Dropbox)**  
+  https://www.dropbox.com/home/DataScienceTeam9?preview=Keywords+and+Bucketing.xlsx  
+  *(Final keyword dictionary used for classification)*  
+
+- 📊 **Final Dataset (Dropbox)**  
+  https://www.dropbox.com/home/DataScienceTeam9?preview=Fintech_Data.csv  
+  *(Processed dataset used for analysis)*  
+
+---
+
+## 🎯 Objective
+
+- Analyze hiring trends in fintech across major U.S. banks  
+- Classify jobs into **Fintech vs Non-Fintech** using NLP  
+- Identify key domains driving fintech growth  
+- Build an automated data pipeline for continuous analysis  
+
+---
+
+## 🛠️ Tech Stack
+
+- **Language:** Python  
+- **Pipeline:** Luigi  
+- **Data Processing:** Pandas, NLP techniques  
+- **Visualization:** Tableau  
+- **Deployment:** Docker  
+- **Storage:** Dropbox  
+
+---
+
+## ⚙️ Pipeline Architecture (Luigi Workflow)
+
+The project uses a **Luigi pipeline** to automate data processing:
+
+1. Generate a merged dataset containing:
+   - Institution  
+   - Job URL  
+   - Position  
+   - Location  
+
+2. Fetch dataset from Dropbox  
+
+3. Apply **Fintech classification algorithm**:
+   - Keyword-based NLP approach  
+   - Feature engineering (FinWords vs TechWords)  
+
+4. Generate enriched dataset  
+
+5. Upload final dataset back to Dropbox  
+
+6. Establish live connection with **Tableau Server** for visualization  
+
+---
+
+## 🔄 How to Run the Project
+
+### Prerequisites
+- Python installed  
+- Required libraries (Luigi, Pandas, etc.)  
+- Docker (optional)  
+
+---
+
+### 🧪 Local Setup
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/phadkeraj/A2_Fintech-Analysis
+cd A2_Fintech-Analysis
